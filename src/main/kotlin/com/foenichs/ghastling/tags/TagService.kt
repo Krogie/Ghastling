@@ -76,7 +76,7 @@ data class Tag(
 
         var container = Container.of(components)
         if (style == TagStyle.Accent) {
-            container = container.withAccentColor(Color(0xB5C8B4))
+            container = container.withAccentColor(TagService.accentColor)
         }
 
         container
@@ -91,8 +91,9 @@ object TagService {
     private val cache = ConcurrentHashMap<Long, ConcurrentHashMap<String, Tag>>()
     private val cooldowns = ConcurrentHashMap<String, Long>()
 
-    // Configurable via init()
     private var cooldownMs = 2500L
+    var accentColor: Color = Color(0xB5C8B4)
+        private set
 
     const val MAX_CONTENT_LEN = 2000
     const val MAX_KEYWORD_LEN = 100
@@ -100,6 +101,7 @@ object TagService {
 
     fun init(config: AppConfig) {
         this.cooldownMs = config.tagCooldown
+        this.accentColor = Color(config.accentColor)
     }
 
     /**
