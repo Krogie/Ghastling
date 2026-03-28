@@ -12,6 +12,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.Connection
 
 object DatabaseFactory {
+    private var dataSource: HikariDataSource? = null
+
     fun init(config: AppConfig) {
         val hikariConfig = HikariConfig().apply {
             jdbcUrl = "jdbc:mariadb://${config.db.host}:${config.db.port}/${config.db.database}?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_general_ci"
@@ -26,14 +28,20 @@ object DatabaseFactory {
             poolName = "Ghastling-Pool"
         }
 
-        val dataSource = HikariDataSource(hikariConfig)
-        val db = Database.connect(dataSource)
+        val ds = HikariDataSource(hikariConfig)
+        dataSource = ds
+        val db = Database.connect(ds)
 
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_REPEATABLE_READ
 
         transaction(db) {
             SchemaUtils.create(Guilds, Tags)
         }
+    }
+
+    fun shutdown() {
+        dataSource?.close()
+        dataSource = null
     }
 }
 

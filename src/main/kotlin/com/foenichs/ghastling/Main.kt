@@ -15,7 +15,11 @@ fun main() {
         DatabaseFactory.init(config)
 
         val app = App(config)
-        Runtime.getRuntime().addShutdownHook(Thread { app.shutdown() })
+        Runtime.getRuntime().addShutdownHook(Thread {
+            app.shutdown()
+            DatabaseFactory.shutdown()
+            logger.info("Ghastling shutdown complete")
+        })
         app.start()
     } catch (e: Exception) {
         logger.error("Failed to start Ghastling", e)

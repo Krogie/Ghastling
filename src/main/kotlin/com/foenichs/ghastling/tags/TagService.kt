@@ -149,6 +149,22 @@ object TagService {
     }
 
     /**
+     * Searches tags by keyword or content for a specific guild.
+     */
+    fun searchTags(guildId: Long, query: String): List<Tag> {
+        val needle = query.trim().lowercase()
+        if (needle.isBlank()) return emptyList()
+        return getGuildCache(guildId).values
+            .distinctBy { it.primary }
+            .filter {
+                it.primary.lowercase().contains(needle) ||
+                it.keywords.lowercase().contains(needle) ||
+                it.content.lowercase().contains(needle)
+            }
+            .sortedByDescending { it.usages }
+    }
+
+    /**
      * Checks if any of the provided new keywords conflict with existing tags in the guild.
      */
     fun findConflicts(guildId: Long, newKeywords: String, ignorePrimary: String? = null): Map<String, String> {

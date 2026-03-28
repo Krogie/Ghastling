@@ -15,7 +15,10 @@ data class AppConfig(
                 .toSet()
 
             val colorHex = Config.get("ACCENT_COLOR", "B5C8B4")
-            val color = colorHex.removePrefix("#").toInt(16)
+            val color = runCatching { colorHex.removePrefix("#").toInt(16) }.getOrElse {
+                System.err.println("Invalid ACCENT_COLOR '$colorHex', falling back to default B5C8B4")
+                0xB5C8B4
+            }
 
             return AppConfig(
                 discordToken = Config.get("DISCORD_TOKEN"),

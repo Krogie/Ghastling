@@ -42,7 +42,10 @@ class App(private val config: AppConfig) {
                 SubcommandData("manage", "Create, edit or delete tags.")
                     .addOption(OptionType.STRING, "name", "The tag keyword.", true, true)
                     .addOption(OptionType.BOOLEAN, "remove", "Permanently delete this tag.", false),
-                SubcommandData("show", "Find and display tags.")
+                SubcommandData("show", "Find and display tags."),
+                SubcommandData("search", "Search tags by keyword or content.")
+                    .addOption(OptionType.STRING, "query", "The search term.", true),
+                SubcommandData("stats", "Show tag usage statistics.")
             )
 
         for (guild in jda.guilds) {
